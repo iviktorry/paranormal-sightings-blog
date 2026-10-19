@@ -2,7 +2,7 @@ import http from "node:http";
 import { fileURLToPath } from "node:url";
 import fs from "node:fs/promises";
 
-const PORT = 7000;
+const PORT = process.env.PORT || 7000;
 const JSONPath = fileURLToPath(new URL("./data/data.json", import.meta.url));
 
 function setCORSPolicy(res) {
@@ -70,6 +70,7 @@ async function handlePOST(req, res) {
 
 const server = http.createServer(async (req, res) => {
   setCORSPolicy(res);
+  console.log("helloooo");
 
   if (req.method === "OPTIONS") {
     res.writeHead(200);
@@ -86,4 +87,6 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT);
+server.listen(PORT, "0.0.0.0", () => {
+  console.log(`server is running on port ${PORT}`);
+});
