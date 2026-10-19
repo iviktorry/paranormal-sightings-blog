@@ -7,7 +7,8 @@ export default function Sightings() {
   useEffect(() => {
     async function fetchStories() {
       try {
-        const response = await fetch("http://localhost:7000/api");
+        const apiUrl = import.meta.env.VITE_API_URL;
+        const response = await fetch(apiUrl);
         const data = await response.json();
         setStories(data);
       } catch (error) {

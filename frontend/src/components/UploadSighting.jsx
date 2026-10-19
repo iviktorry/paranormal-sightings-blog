@@ -27,7 +27,8 @@ export default function UploadSighting() {
     };
 
     try {
-      const response = await fetch(`http://localhost:7000/api`, {
+      const apiUrl = import.meta.env.VITE_API_URL;
+      const response = await fetch(apiUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
