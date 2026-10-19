@@ -20,7 +20,7 @@ export default function Story({ location, timeStamp, title, text }) {
         onClick={() => setIsOpen((prev) => !prev)}
         className="mt-4 w-full text-right"
       >
-        Read in full
+        {isOpen ? "Close" : "Read in full"}
       </button>
     </article>
   );
