@@ -70,7 +70,6 @@ async function handlePOST(req, res) {
 
 const server = http.createServer(async (req, res) => {
   setCORSPolicy(res);
-  console.log("helloooo");
 
   if (req.method === "OPTIONS") {
     res.writeHead(200);
@@ -84,6 +83,13 @@ const server = http.createServer(async (req, res) => {
     } else if (req.method === "POST") {
       handlePOST(req, res);
     }
+  } else {
+    sendResponse(
+      res,
+      404,
+      "application/json",
+      JSON.stringify({ message: "Route not found. Use /api endpoint." }),
+    );
   }
 });
 
