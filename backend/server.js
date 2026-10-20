@@ -1,9 +1,27 @@
 import http from "node:http";
 import { fileURLToPath } from "node:url";
 import fs from "node:fs/promises";
+import sanitizeHtml from "sanitize-html";
 
 const PORT = process.env.PORT || 7000;
-const JSONPath = fileURLToPath(new URL("./data/data.json", import.meta.url));
+const JSONPath = fileURLToPath(new URL("./data/data.json", import.meta.url))
+
+function handleSanitize(data) {
+  const sanitizedData = {};
+
+  for (const [key, value] of Object.entries(data)) {
+    if (typeof value === "string") {
+      sanitizedData[key] = sanitizeHtml(value, {
+        allowedTags: ["b"],
+        allowedAttributes: {},
+      });
+    } else {
+      sanitizedData[key] = value;
+    }
+  }
+
+  return sanitizedData;
+}
 
 function setCORSPolicy(res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -50,7 +68,8 @@ async function handlePOST(req, res) {
   try {
     const fileDataObj = await getDataFromJSON();
     const bodyObj = await getBodyData(req);
-    fileDataObj.push(bodyObj);
+    const sanitizedBody = handleSanitize(bodyObj);
+    fileDataObj.push(sanitizedBody);
 
     await fs.writeFile(JSONPath, JSON.stringify(fileDataObj, null, 2), "utf8");
 

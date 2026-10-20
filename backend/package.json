@@ -14,5 +14,8 @@
   "description": "",
   "devDependencies": {
     "nodemon": "^3.1.14"
+  },
+  "dependencies": {
+    "sanitize-html": "^2.18.1"
   }
 }
