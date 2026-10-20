@@ -1,5 +1,5 @@
 {
-  "name": "backend",
+  "name": "paranormal-sightings-api",
   "version": "1.0.0",
   "main": "server.js",
   "type": "module",
@@ -9,7 +9,7 @@
     "dev": "nodemon server.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "iviktorry",
   "license": "ISC",
   "description": "",
   "devDependencies": {
