@@ -29,7 +29,6 @@ const server = http.createServer(async (req, res) => {
     sendResponse(
       res,
       404,
-      "application/json",
       JSON.stringify({ message: "Route not found. Use /api endpoint." }),
     );
   }
