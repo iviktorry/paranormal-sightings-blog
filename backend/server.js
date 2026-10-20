@@ -2,9 +2,18 @@ import http from "node:http";
 import { fileURLToPath } from "node:url";
 import fs from "node:fs/promises";
 import sanitizeHtml from "sanitize-html";
+import { EventEmitter } from "node:events";
 
 const PORT = process.env.PORT || 7000;
-const JSONPath = fileURLToPath(new URL("./data/data.json", import.meta.url))
+const JSONPath = fileURLToPath(new URL("./data/data.json", import.meta.url));
+
+const sightingEvents = new EventEmitter();
+
+function createAlert(sighting) {
+  console.log(`Send alert to Ghost Hunters in ${sighting.location}`);
+}
+
+sightingEvents.on("sighting-added", createAlert);
 
 function handleSanitize(data) {
   const sanitizedData = {};
@@ -72,6 +81,8 @@ async function handlePOST(req, res) {
     fileDataObj.push(sanitizedBody);
 
     await fs.writeFile(JSONPath, JSON.stringify(fileDataObj, null, 2), "utf8");
+
+    sightingEvents.emit("sighting-added", sanitizedBody);
 
     sendResponse(res, 201, "application/json", JSON.stringify(bodyObj));
   } catch (error) {
