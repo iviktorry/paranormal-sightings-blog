@@ -1,102 +1,14 @@
 import http from "node:http";
 import { fileURLToPath } from "node:url";
-import fs from "node:fs/promises";
-import sanitizeHtml from "sanitize-html";
-import { EventEmitter } from "node:events";
+import { handleGET, handlePOST } from "./utils/routeHandlers.js";
+import { setCORSPolicy } from "./utils/setCORSPolicy.js";
+import { sendResponse } from "./utils/sendResponse.js";
 
 const PORT = process.env.PORT || 7000;
-const JSONPath = fileURLToPath(new URL("./data/data.json", import.meta.url));
 
-const sightingEvents = new EventEmitter();
-
-function createAlert(sighting) {
-  console.log(`Send alert to Ghost Hunters in ${sighting.location}`);
-}
-
-sightingEvents.on("sighting-added", createAlert);
-
-function handleSanitize(data) {
-  const sanitizedData = {};
-
-  for (const [key, value] of Object.entries(data)) {
-    if (typeof value === "string") {
-      sanitizedData[key] = sanitizeHtml(value, {
-        allowedTags: ["b"],
-        allowedAttributes: {},
-      });
-    } else {
-      sanitizedData[key] = value;
-    }
-  }
-
-  return sanitizedData;
-}
-
-function setCORSPolicy(res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  res.setHeader("Content-Type", "application/json");
-}
-
-function sendResponse(res, statusCode, contentType, payload) {
-  res.setStatus = statusCode;
-  res.setHeader("Content-Type", contentType);
-  res.end(payload);
-}
-
-async function getDataFromJSON() {
-  const fileData = await fs.readFile(JSONPath, "utf8");
-  return JSON.parse(fileData);
-}
-
-async function getBodyData(req) {
-  let body = "";
-  for await (const chunk of req) {
-    body += chunk;
-  }
-  return JSON.parse(body);
-}
-
-async function handleGET(res) {
-  try {
-    const fileDataObj = await getDataFromJSON();
-    sendResponse(res, 200, "application/json", JSON.stringify(fileDataObj));
-  } catch (error) {
-    console.log(`Error reading data: ${error}`);
-    sendResponse(
-      res,
-      500,
-      "application/json",
-      JSON.stringify({ error: "Unable to read data" }),
-    );
-  }
-}
-
-async function handlePOST(req, res) {
-  try {
-    const fileDataObj = await getDataFromJSON();
-    const bodyObj = await getBodyData(req);
-    const sanitizedBody = handleSanitize(bodyObj);
-    fileDataObj.push(sanitizedBody);
-
-    await fs.writeFile(JSONPath, JSON.stringify(fileDataObj, null, 2), "utf8");
-
-    sightingEvents.emit("sighting-added", sanitizedBody);
-
-    sendResponse(res, 201, "application/json", JSON.stringify(bodyObj));
-  } catch (error) {
-    console.log(`Error white receiving data: ${error}`);
-    sendResponse(
-      res,
-      400,
-      "application/json",
-      JSON.stringify({
-        error: "Invalid JSON request body",
-      }),
-    );
-  }
-}
+export const JSONPath = fileURLToPath(
+  new URL("./data/data.json", import.meta.url),
+);
 
 const server = http.createServer(async (req, res) => {
   setCORSPolicy(res);
