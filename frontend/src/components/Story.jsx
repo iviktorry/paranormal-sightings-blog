@@ -9,9 +9,10 @@ export default function Story({ location, timeStamp, title, text }) {
       </p>
       <h2 className="my-1 text-lg font-bold">{title}</h2>
       <div className="relative">
-        <p className={`${isOpen ? "h-full" : "h-40 lg:h-30"} overflow-hidden`}>
-          {text}
-        </p>
+        <p
+          dangerouslySetInnerHTML={{ __html: text }}
+          className={`${isOpen ? "h-full" : "h-40 lg:h-30"} overflow-hidden`}
+        ></p>
         <div
           className={`${isOpen ? "" : "pointer-events-none absolute bottom-0 left-0 h-12 w-full bg-linear-to-t from-white via-white/80 to-transparent"}`}
         ></div>
