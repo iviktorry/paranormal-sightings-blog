@@ -63,7 +63,7 @@ paranormal-sightings-blog/
 ### Installation
 
 ```bash
-git clone [https://github.com/iviktorry/paranormal-sightings-blog.git](https://github.com/iviktorry/paranormal-sightings-blog.git)
+git clone https://github.com/iviktorry/paranormal-sightings-blog.git
 cd paranormal-sightings-blog
 
 # Install frontend dependencies
